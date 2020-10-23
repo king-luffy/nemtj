@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>  <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nemt.nemtj.dao.AesMapper">
+
+
+    <select id="queryByContent" parameterType="java.lang.String" resultType="com.nemt.nemtj.model.AesM">
+        SELECT
+        *
+        FROM
+        content2key
+        WHERE content=#{0}
+    </select>
+
+    <insert id="add" parameterType="map">
+        insert into content2key (content,showkey,createtime)
+        values (#{content},#{showkey},#{createtime})
+    </insert>
+
+    <insert id="addlicense" parameterType="map">
+        insert into license (customname,number,uuid,mac,ip,createtime,updatetime,isfather)
+        values (#{customname},#{number},#{uuid},#{mac},#{ip},#{createtime},#{updatetime},#{isfather})
+    </insert>
+
+    <insert id="adduserlicense" parameterType="map">
+        insert into license (customname,number,uuid,mac,ip,createtime,updatetime,isfather)
+        values (#{customname},#{number},#{uuid},#{mac},#{ip},#{createtime},#{updatetime},#{isfather})
+    </insert>
+
+    <select id="gettotalcount" resultType="Integer">
+    SELECT
+    number
+     from license
+      WHERE isfather=1
+    </select>
+
+    <select id="getusedcount" resultType="Integer">
+       SELECT
+       SUM(number)
+       from license
+        WHERE isfather=0
+    </select>
+
+    <update id="updatelicense" parameterType="map">
+        UPDATE
+        license
+        set customname=#{customname},
+        number=#{number},
+        uuid=#{uuid},
+        mac=#{mac},
+        ip=#{ip},
+        createtime=#{createtime},
+        updatetime=#{updatetime}
+      WHERE  isfather=1
+    </update>
+
+
+    <select id="getcreatetime" resultType="java.util.Date">
+        SELECT
+        createtime
+        FROM
+        license
+        WHERE isfather=1
+    </select>
+
+
+    <select id="isExistUser" parameterType="map" resultType="Integer">
+       SELECT COUNT(*) FROM `user` WHERE openid=#{openid}
+    </select>
+
+
+    <insert id="addUser" parameterType="com.nemt.nemtj.wxbean.User">
+        insert into user
+        (openid,nickname,avatar,gender,mobile,discount,member,membertime,
+        score,subject_id,membertimeNew,createtime,expiretime,expires_in,code)
+        values (#{openid},#{nickname},#{avatar},
+        #{gender},#{mobile}
+        ,#{discount},#{member}
+        ,#{membertime},#{score}
+        ,#{subject_id},#{membertimeNew}
+        ,#{createtime},#{expiretime}
+        ,#{expires_in},#{code})
+    </insert>
+
+    <select id="findUser" parameterType="map" resultType="com.nemt.nemtj.wxbean.User">
+       SELECT * FROM `user` WHERE openid=#{openid}
+    </select>
+
+
+    <select id="getRecList" resultType="java.util.Map">
+
+       SELECT * FROM sch_line_query ,sch_base_info,sch_min_base_info WHERE sch_line_query.sch_name=sch_base_info.sch_name and sch_base_info.sch_name=sch_min_base_info.sch_name AND sch_line BETWEEN 450 AND 500 ORDER BY year_ DESC LIMIT 0,10
+
+    </select>
+
+
+    <select id="getRecListBy"  parameterType="map" resultType="java.util.Map">
+
+       SELECT * FROM sch_line_query ,sch_base_info,sch_min_base_info WHERE
+        sch_line_query.sch_name=sch_base_info.sch_name and sch_base_info.sch_name=sch_min_base_info.sch_name
+         AND sch_line BETWEEN #{min_score} AND #{max_score}
+         <if test="site !=null and site != ''">
+         and  city=#{site}
+         </if>
+        <if test="tag !=null and tag != '' and tag=='985'">
+            and  is_985=1
+        </if>
+        <if test="tag !=null and tag != '' and tag=='211'">
+            and  is_211=1
+        </if>
+        <if test="site !=null and site != ''">
+            and  city=#{site}
+        </if>
+
+        <if test="type !=null and type != ''">
+            and  sch_fig=#{tyoe}+'类'
+        </if>
+
+         ORDER BY year_ DESC LIMIT #{page},12
+
+    </select>
+
+    <select id="getSchoolList"  parameterType="map" resultType="java.util.Map">
+
+        SELECT * FROM sch_min_base_info where  1=1
+        <if test="area !=null and area != '' and area != '不限'">
+            and  city=#{area}
+        </if>
+
+        <if test="type !=null and type != '' and type != '不限'">
+            and  sch_fig=#{tyoe}+'类'
+        </if>
+
+        <if test="tag !=null and tag != '' and tag=='211' and tag != '不限'">
+            and  is_211=1
+        </if>
+        <if test="tag !=null and tag != '' and tag=='985' and tag != '不限'">
+            and  is_985=1
+        </if>
+        <if test="post !=null and post != '' and post != '不限' ">
+            and  sch_cat=#{post}
+        </if>
+
+        <if test="keyword !=null and keyword != ''">
+            and  sch_name=#{keyword}
+        </if>
+
+
+
+         LIMIT #{page},14
+
+    </select>
+
+    <select id="getCateList"  parameterType="map" resultType="java.util.Map">
+
+        SELECT * FROM subject_info where  1=1
+        <if test="sub_category !=null and sub_category != '' ">
+            and  sub_category=#{cate}
+        </if>
+
+        <if test="subject_name !=null and subject_name != '' ">
+            and  subject_name like   concat('%',#{keyword},'%')
+        </if>
+
+    </select>
+
+    <select id="getCateMaster"  parameterType="map" resultType="java.util.Map">
+
+        SELECT * FROM subject_info where  1=1
+
+    </select>
+
+</mapper>
