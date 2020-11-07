@@ -59,6 +59,8 @@ public interface AesMapper {
 
     int addUser(User user);
 
+    int updateUser(User user);
+
     User findUser(String openid);
 
     List<Map> getRecList();

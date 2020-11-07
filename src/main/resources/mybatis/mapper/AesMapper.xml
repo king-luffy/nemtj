@@ -81,6 +81,13 @@
         ,#{expires_in},#{code})
     </insert>
 
+    <update id="updateUser" parameterType="com.nemt.nemtj.wxbean.User">
+        UPDATE
+        user
+        set membertimeNew=#{membertimeNew}
+        WHERE  id=#{id}
+    </update>
+
     <select id="findUser" parameterType="map" resultType="com.nemt.nemtj.wxbean.User">
        SELECT * FROM `user` WHERE openid=#{openid}
     </select>

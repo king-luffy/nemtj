@@ -466,7 +466,10 @@ public class NemtController {
         //List<Map> maps=aesMapper.getRecList();
         Map map=(Map) JSON.parse(data);
         int  val=Integer.parseInt(map.get("val").toString());
-        int  section=Integer.parseInt(map.get("section").toString());
+        int  section= 10;
+        if(map.get("section")!=null){
+            section=Integer.parseInt(map.get("section").toString());
+        }
         String subject=map.get("subject").toString();
         String way=map.get("way").toString();
         String cate=map.get("cate").toString();
@@ -754,5 +757,37 @@ public class NemtController {
         return a;
     }
 
+
+    @RequestMapping(path = "/user/exchangeNew", method = RequestMethod.POST,produces = "application/json; charset=utf-8")
+    @ResponseBody
+    public String exchangeNew(@RequestBody String data) throws Exception {
+
+        Map map=(Map) JSON.parse(data);
+        String usertoken=map.get("userToken").toString();
+        String openid=jedis.get(usertoken);
+        jedis.close();
+        Map map1=new HashMap();
+        Date date=new Date();
+        map1.put("code",0);
+        map1.put("time",date.getTime());
+        map1.put("msg","");
+
+        User user=aesMapper.findUser(openid);
+        if(user==null){
+            map1.put("code",400);
+        }
+        Long membertimeNewL = new Date().getTime()+10000000L;
+        user.setMembertimeNew(membertimeNewL);
+        int res = aesMapper.updateUser(user);
+        System.out.println(res);
+        List<Map> maps2=new ArrayList<>();
+        Map<String,Object> map2=new HashMap<>();
+        maps2.add(map2);
+        map2.put("membertimeNew",membertimeNewL);
+        map1.put("data",maps2);
+
+        return JSON.toJSONString(map1);
+
+    }
 
 }
