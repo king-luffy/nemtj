@@ -71,12 +71,12 @@
     <insert id="addUser" parameterType="com.nemt.nemtj.wxbean.User">
         insert into user
         (openid,nickname,avatar,gender,mobile,discount,member,membertime,
-        score,subject_id,membertimeNew,createtime,expiretime,expires_in,code)
+        score,subject_id,subject,membertimeNew,createtime,expiretime,expires_in,code)
         values (#{openid},#{nickname},#{avatar},
         #{gender},#{mobile}
         ,#{discount},#{member}
         ,#{membertime},#{score}
-        ,#{subject_id},#{membertimeNew}
+        ,#{subject_id},#{subject},#{membertimeNew}
         ,#{createtime},#{expiretime}
         ,#{expires_in},#{code})
     </insert>
@@ -84,7 +84,9 @@
     <update id="updateUser" parameterType="com.nemt.nemtj.wxbean.User">
         UPDATE
         user
-        set membertimeNew=#{membertimeNew}
+        set
+        <if test="membertimeNew != null">membertimeNew=#{membertimeNew},</if>
+        <if test="subject != null">subject=#{subject}</if>
         WHERE  id=#{id}
     </update>
 
